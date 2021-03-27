@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Screen from './components/screen';
+import GraphScreen from "./components/graph/graphScreen/graphScreen";
 import { Col, Row ,Card} from 'react-bootstrap';
 function App() {
   const screenRef = useRef(null)
@@ -17,8 +17,8 @@ function App() {
             margin: 0,
             height: "100%",
             width: "20%",
-            border:"1px solid black",
-            borderRadius:0,
+            border: "none",
+            borderRadius:   0,
           }}
         ></Card>
         <Col
@@ -26,11 +26,10 @@ function App() {
             padding: 0,
             margin: 0,
             height: "100%",
-            
           }}
           ref={screenRef}
         >
-          <Screen></Screen>
+          <GraphScreen></GraphScreen>
         </Col>
       </Row>
     </div>
