@@ -9,12 +9,10 @@ const AlgorithmActionsContext = React.createContext(undefined);
 const algorithmNames = Object.keys(algorithms);
 
 const AlgorithmProvider = ({ children }) => {
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState("bubble_sort");
-  const [algorithmString, setAlgorithmString] = useState(
-    algorithms.bubble_sort
-  );
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState("dfs");
+  const [algorithmString, setAlgorithmString] = useState(algorithms.dfs);
   const [algorithm, setAlgorithm] = useState();
-  const [algorithmType, setAlgorithmType] = useState("array");
+  const [algorithmType, setAlgorithmType] = useState(algorithmTypeMap["dfs"]);
 
   const selectAlgorithm = (name) => {
     setSelectedAlgorithm(name);
