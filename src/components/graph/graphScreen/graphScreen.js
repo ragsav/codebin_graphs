@@ -3,20 +3,71 @@ import { Card, Button, ButtonGroup } from "react-bootstrap";
 import Edge from "../edge/edge";
 import Node from "../node/node";
 import { generateRandomGraph } from "../helpers/helper";
+import RangeSlider from "react-bootstrap-range-slider";
+
+import {
+  useStatusState,
+  useStatusActions,
+  useAdjListActions,
+  useProcessActions,
+  useProcessState,
+  useAdjListState
+} from "../../../contexts";
+
+
+function dfs_rec(adjList, v, vis) {
+  vis[v] = true;
+
+  console.log( { currentNode: v, vis: [...vis] });
+
+  for (var i = 0; i < adjList[v].length; i++) {
+    if (!vis[adjList[v][i]]) {
+      dfs_rec(adjList, adjList[v][i], vis);
+    }
+  }
+}
+function sortingAlgorithm(adjList) {
+  console.log(adjList);
+  var vis = Array(adjList.length).fill(false);
+  for (var i = 0; i < adjList.length; i++) {
+    dfs_rec(adjList, i, vis);
+  }
+};
 
 const GraphController = (props) => {
+  const { isPlaying } = useStatusState();
+  const { play, pause } = useStatusActions();
+  const { refreshAdjList } = useAdjListActions();
+  const { frequency } = useProcessState();
+  const { changeFrequency } = useProcessActions();
   return (
     <div
       style={{
         display: "flex",
         height: "100%",
         width: "100%",
+        backgroundColor: "#444444",
         flexDirection: "column",
       }}
     >
       <div
-        style={{ height: "50%", width: "100%", backgroundColor: "red" }}
-      ></div>
+        style={{
+          height: "50%",
+          width: "100%",
+
+          paddingBottom: 3,
+          backgroundImage: "linear-gradient(to right,#B7FFEC,#D971FF)",
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+
+            backgroundColor: "#444444",
+          }}
+        ></div>
+      </div>
       <div
         style={{
           height: "50%",
@@ -25,7 +76,7 @@ const GraphController = (props) => {
           display: "flex",
           flexDirection: "row",
           padding: "4px 16px 4px 16px",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
         }}
       >
         <div>
@@ -38,6 +89,7 @@ const GraphController = (props) => {
                 fontSize: 12,
                 fontWeight: "500",
               }}
+              onClick={refreshAdjList}
             >
               Generate random graph
             </Button>
@@ -55,6 +107,40 @@ const GraphController = (props) => {
           </ButtonGroup>
         </div>
 
+        <div
+          style={{
+            marginLeft: 20,
+            marginRight: 20,
+            display: "flex",
+            flexDirection: "row",
+            padding: 0,
+            justifyContent: "center",
+          }}
+        >
+          <span
+            style={{
+              marginRight: 8,
+              color: "white",
+              padding: "auto",
+              fontSize: 12,
+              fontWeight: "500",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            Speed
+          </span>
+          <RangeSlider
+            tooltip={false}
+            variant="light"
+            size="sm"
+            min={1}
+            value={frequency}
+            onChange={
+              (changeEvent) => changeFrequency(changeEvent.target.value)
+            }
+          />
+        </div>
         <div>
           <ButtonGroup>
             <Button
@@ -65,41 +151,11 @@ const GraphController = (props) => {
                 fontSize: 12,
                 fontWeight: "500",
               }}
-            >
-              Start
-            </Button>
-            <Button
-              variant="light"
-              style={{
-                marginRight: 2,
-                padding: "2px 8px 2px 8px",
-                fontSize: 12,
-                fontWeight: "500",
+              onClick={() => {
+                isPlaying ? pause() : play();
               }}
             >
-              Stop
-            </Button>
-            <Button
-              variant="light"
-              style={{
-                marginRight: 2,
-                padding: "2px 8px 2px 8px",
-                fontSize: 12,
-                fontWeight: "500",
-              }}
-            >
-              Pause
-            </Button>
-            <Button
-              variant="light"
-              style={{
-                marginRight: 2,
-                padding: "2px 8px 2px 8px",
-                fontSize: 12,
-                fontWeight: "500",
-              }}
-            >
-              Resume
+              {isPlaying ? "Pause" : "Play"}
             </Button>
           </ButtonGroup>
         </div>
@@ -115,8 +171,12 @@ const GraphScreen = (props) => {
   const nodeRef1 = useRef(null);
   const nodeRef2 = useRef(null);
 
-  const { adjList, nodes, links } = generateRandomGraph(10);
+  const { adjList } = useAdjListState();
 
+  // sortingAlgorithm(adjList)
+  const {graphState} = useProcessState();
+  useEffect(()=>{console.log(graphState)},[graphState])
+  // console.log(adjList)
   const noderef = adjList.map(() => createRef());
   const reducedEdges = new Map();
   const connectedNodePairs = [];
@@ -136,15 +196,12 @@ const GraphScreen = (props) => {
 
   useEffect(() => {
     if (screenRef?.current) {
-      console.log(screenRef);
-      //   setNodePositions(getNodeLocations(nodes, links, screenRef));
       const dim = {
         top: Math.floor(screenRef.current.offsetTop),
         left: Math.floor(screenRef.current.offsetLeft),
         x: Math.floor(screenRef.current.offsetWidth),
         y: Math.floor(screenRef.current.offsetHeight),
       };
-      console.log(dim);
       setDimensions({ ...dim });
     }
   }, [screenRef]);
@@ -174,24 +231,34 @@ const GraphScreen = (props) => {
         {dimensions ? (
           <div>
             {adjList.map((val, index) => {
+              var color = "white";
+              if(graphState&&graphState.vis&&graphState.vis[index]===true){
+                color = "green";
+              }
+              if (graphState?.currentNode === index) {
+                color = "yellow";
+              }
               return (
                 <Node
+                  key={index}
                   edgeRef={noderef[index]}
                   container={screenRef}
                   top={dimensions.top}
                   left={dimensions.left}
                   x={dimensions.x}
                   y={dimensions.y}
+                  bgColor={color}
                 >
                   <Card
+                    key={`${index}1`}
                     aria-disabled
                     ref={noderef[index]}
                     style={{
                       margin: "auto",
                       padding: "auto",
-                      color: "white",
+                      color: "black",
                       border: "none",
-                      backgroundColor: "#2BAE00",
+                      backgroundColor: color,
                       userSelect: "none",
                     }}
                   >
@@ -201,11 +268,26 @@ const GraphScreen = (props) => {
               );
             })}
             {connectedNodePairs.map(([n1, n2], index) => {
+              // console.log({n1,n2})
+              var color = "white";
+              
+              
+              if (
+                graphState &&
+                graphState.path&&graphState.path.indexOf(n1) != -1
+              ) {
+                if (graphState.path[graphState.path.indexOf(n1) + 1] === n2) {
+                  color = "red";
+                }
+              }
               return (
                 <Edge
+                  key={`${n1}->${n2}>`}
                   n1={noderef[n1]}
                   n2={noderef[n2]}
+                  label={`${n1}->${n2}`}
                   container={screenRef}
+                  bgColor={color}
                   top={dimensions.top}
                   left={dimensions.left}
                   x={dimensions.x}

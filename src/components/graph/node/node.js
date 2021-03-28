@@ -26,7 +26,7 @@ const Node = (props, ref) => {
       //   console.log("dispatching event");
       props.edgeRef.current.dispatchEvent(event);
     }
-  }, [position]);
+  });
 
   function handleMouseMove(e) {
     if (containerRef) {
@@ -81,7 +81,7 @@ const Node = (props, ref) => {
       style={{
         padding: 5,
         margin: 0,
-        backgroundColor: "#2BAE00",
+        backgroundColor: props.bgColor,
         position: "absolute",
         border: "2px solid white",
         borderRadius: size / 2,
@@ -90,7 +90,7 @@ const Node = (props, ref) => {
         top: position.y,
         left: position.x,
         zIndex: 1,
-        // transitionDuration: "0.5s linear",
+        transition: "backgroundColor 0.5s linear",
         display: "flex",
       }}
       onMouseDown={(e) => {

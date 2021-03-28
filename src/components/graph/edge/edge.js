@@ -10,73 +10,136 @@ function getEdge(x1, y1, x2, y2) {
 }
 
 const Edge = (props) => {
-  const [c1, setC1] = useState({
-    x: Math.floor(props.x / 2 + props.left),
-    y: Math.floor(props.y / 2 + props.top),
-  });
-  const [c2, setC2] = useState({
-    x: Math.floor(props.x / 2 + props.left),
-    y: Math.floor(props.y / 2 + props.top),
-  });
-  const [center, setCenter] = useState({ x: 0, y: 0 });
-  const [angle, setAngle] = useState(0);
-  const [length, setlength] = useState(0);
-  const [currentN1, setCurrentN1] = useState(props.n1?.current);
-  const [currentN2, setCurrentN2] = useState(props.n2?.current);
+                          const [c1, setC1] = useState({
+                            x: Math.floor(props.x / 2 + props.left),
+                            y: Math.floor(props.y / 2 + props.top),
+                          });
+                          const [c2, setC2] = useState({
+                            x: Math.floor(props.x / 2 + props.left),
+                            y: Math.floor(props.y / 2 + props.top),
+                          });
 
-  useEffect(() => {
-    if (currentN1 === null) setCurrentN1(props.n1.current);
-    if (currentN2 === null) setCurrentN2(props.n2.current);
-  }, [props.n1, currentN1, setCurrentN1, props.n2, currentN2]);
+                          const params = getEdge(c1.x, c1.y, c2.x, c2.y);
+                          // setAngle(params.angle);
+                          // setCenter({ x: params.cx, y: params.cy });
+                          // setlength(params.length);
 
-  useEffect(() => {
-    if (currentN1) {
-      const handler = (e) => {
-        if (e?.detail) {
-          const newC1 = e.detail;
-          setC1(newC1);
-        }
-      };
-      currentN1.addEventListener("position", handler);
-      return () => currentN1?.removeEventListener("position", handler);
-    }
-  }, [currentN1]);
-  useEffect(() => {
-    if (currentN2) {
-      const handler = (e) => {
-        if (e?.detail) {
-          const newC2 = e.detail;
-          setC2(newC2);
-        }
-      };
-      currentN2.addEventListener("position", handler);
-      return () => currentN2?.removeEventListener("position", handler);
-    }
-  }, [currentN2]);
+                          const [center, setCenter] = useState({
+                            x: params.cx,
+                            y: params.cy,
+                          });
+                          const [angle, setAngle] = useState(params.angle);
+                          const [length, setlength] = useState(params.length);
+                          const [currentN1, setCurrentN1] = useState(
+                            props.n1?.current
+                          );
+                          const [currentN2, setCurrentN2] = useState(
+                            props.n2?.current
+                          );
 
-  useEffect(() => {
-    const params = getEdge(c1.x, c1.y, c2.x, c2.y);
-    setAngle(params.angle);
-    setCenter({ x: params.cx, y: params.cy });
-    setlength(params.length);
-  }, [c1, c2]);
-  return (
-    <Card
-      //   ref={ref}
-      style={{
-        position: "absolute",
-        height: 2,
-        width: length,
-        top: center.y,
-        left: center.x,
-        zIndex: 0,
+                          useEffect(() => {
+                            if (currentN1 === null)
+                              setCurrentN1(props.n1.current);
+                            if (currentN2 === null)
+                              setCurrentN2(props.n2.current);
+                          }, [
+                            props.n1,
+                            currentN1,
+                            setCurrentN1,
+                            props.n2,
+                            currentN2,
+                          ]);
 
-        // backgroundImage:
-        //   "linear-gradient(to right, rgb(0, 255, 187),rgb(115, 0, 255))",
-        transform: `rotate(${angle}deg)`,
-      }}
-    ></Card>
-  );
-};
+                          useEffect(() => {
+                            if (currentN1) {
+                              const handler = (e) => {
+                                if (e?.detail) {
+                                  const newC1 = e.detail;
+                                  setC1(newC1);
+                                }
+                              };
+                              currentN1.addEventListener("position", handler);
+                              return () =>
+                                currentN1?.removeEventListener(
+                                  "position",
+                                  handler
+                                );
+                            }
+                          }, [currentN1]);
+                          useEffect(() => {
+                            if (currentN2) {
+                              const handler = (e) => {
+                                if (e?.detail) {
+                                  const newC2 = e.detail;
+                                  setC2(newC2);
+                                }
+                              };
+                              currentN2.addEventListener("position", handler);
+                              return () =>
+                                currentN2?.removeEventListener(
+                                  "position",
+                                  handler
+                                );
+                            }
+                          }, [currentN2]);
+
+                          useEffect(() => {
+                            const params = getEdge(c1.x, c1.y, c2.x, c2.y);
+                            setAngle(params.angle);
+                            setCenter({ x: params.cx, y: params.cy });
+                            setlength(params.length);
+                          }, [c1, c2]);
+
+                          // useEffect(()=>{
+                          //   if(c1&&c2){
+                          //     const params = getEdge(c1.x, c1.y, c2.x, c2.y);
+                          //     setAngle(params.angle);
+                          //     setCenter({ x: params.cx, y: params.cy });
+                          //     setlength(params.length);
+                          //   }
+                          // })
+                          return (
+                            <Card
+                              //   ref={ref}
+                              style={{
+                                position: "absolute",
+
+                                width: length,
+                                height: 2,
+                                top: center.y,
+                                left: center.x,
+                                zIndex: 0,
+                                fontSize: 8,
+                                backgroundColor: props.bgColor,
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "center",
+
+                                // backgroundImage:
+                                //   "linear-gradient(to right, rgb(0, 255, 187),rgb(115, 0, 255))",
+                                transform: `rotate(${angle}deg)`,
+                              }}
+                            >
+                              <Card
+                                style={{
+                                  padding: 2,
+                                  margin: 0,
+                                  fontSize: 8,
+                                  width: 30,
+                                  height: 14,
+                                  borderColor: props.bgColor,
+                                  backgroundColor:     "#00000000",
+                                  color:     "white",
+
+                                  // backgroundImage:
+                                  //   "linear-gradient(to right, rgb(0, 255, 187),rgb(115, 0, 255))",
+                                  // transform: `rotate(${angle}deg)`,
+                                }}
+                              >
+                                {props.label}
+                              </Card>
+                            </Card>
+                          );
+                        };
 
 export default Edge;
