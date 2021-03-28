@@ -1,4 +1,11 @@
-export * from "./processContext";
-export * from "./adjListContext";
 export * from "./algorithmContext";
-export * from "./statusContext";
+
+export * from "./graphContext/adjListContext";
+export * from "./graphContext/graphStatusContext";
+export * from "./graphContext/graphProcessContext";
+
+
+
+export * from "./arrayContext/arrayContext";
+export * from "./arrayContext/arrayStatusContext";
+export * from "./arrayContext/arrayProcessContext";

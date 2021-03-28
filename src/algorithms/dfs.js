@@ -10,7 +10,7 @@ function* dfs_rec(adjList, v, vis,path) {
     }
   }
 }
-sortingAlgorithm =function* (adjList) {
+algorithm =function* (adjList) {
   console.log(adjList)
   var vis = Array(adjList.length).fill(false);
   var path=[];

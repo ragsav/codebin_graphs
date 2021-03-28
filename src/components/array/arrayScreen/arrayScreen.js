@@ -1,28 +1,25 @@
 import { createRef, useEffect, useRef, useState } from "react";
 import { Card, Button, ButtonGroup } from "react-bootstrap";
-import Edge from "../edge/edge";
-import Node from "../node/node";
 
+// import { generateRandomArray } from "../helpers/helper";
 import RangeSlider from "react-bootstrap-range-slider";
 
 import {
-  useGraphStatusState,
-  useGraphStatusActions,
-  useAdjListActions,
-  useGraphProcessActions,
-  useGraphProcessState,
-  useAdjListState,
+  useArrayState,
+  useArrayActions,
+  useArrayStatusState,
+  useArrayStatusActions,
+  useArrayProcessActions,
+  useArrayProcessState,
 } from "../../../contexts";
+import Bar from "../bar/bar";
 
-
-
-
-const GraphController = (props) => {
-  const { isPlaying } = useGraphStatusState();
-  const { play, pause } = useGraphStatusActions();
-  const { refreshAdjList } = useAdjListActions();
-  const { frequency } = useGraphProcessState();
-  const { changeFrequency } = useGraphProcessActions();
+const ArrayController = (props) => {
+  const { isPlaying } = useArrayStatusState();
+  const { play, pause } = useArrayStatusActions();
+  const { refreshAdjList } = useArrayActions();
+  const { frequency } = useArrayProcessState();
+  const { changeFrequency } = useArrayProcessActions();
   return (
     <div
       style={{
@@ -74,7 +71,7 @@ const GraphController = (props) => {
               }}
               onClick={refreshAdjList}
             >
-              Generate random graph
+              Generate random array
             </Button>
             <Button
               variant="light"
@@ -114,7 +111,7 @@ const GraphController = (props) => {
             Speed
           </span>
           <RangeSlider
-            tooltip={false}
+            tooltip="off"
             variant="light"
             size="sm"
             min={1}
@@ -146,36 +143,14 @@ const GraphController = (props) => {
     </div>
   );
 };
-const GraphScreen = (props) => {
+const ArrayScreen = (props) => {
   const optionBarHeight = "10%";
   const screenRef = useRef(null);
   const [dimensions, setDimensions] = useState(null);
-  const [nodePositions, setNodePositions] = useState(null);
-  const nodeRef1 = useRef(null);
-  const nodeRef2 = useRef(null);
 
-  const { adjList } = useAdjListState();
+  const { array } = useArrayState();
 
-  // sortingAlgorithm(adjList)
-  const { graphState } = useGraphProcessState();
-  useEffect(()=>{console.log(graphState)},[graphState])
-  // console.log(adjList)
-  const noderef = adjList.map(() => createRef());
-  const reducedEdges = new Map();
-  const connectedNodePairs = [];
-  adjList.forEach((adjacentNodes, currentNode) => {
-    const currentNodeEdges = [];
-    adjacentNodes.forEach((adjacentNode) => {
-      if (!reducedEdges.get(adjacentNode)?.includes(currentNode)) {
-        currentNodeEdges.push(adjacentNode);
-        connectedNodePairs.push([currentNode, adjacentNode]);
-      }
-    });
-    if (currentNodeEdges.length !== 0) {
-      reducedEdges.set(currentNode, currentNodeEdges);
-    }
-  });
-  //   const [screen]
+  const { arrayState } = useArrayProcessState();
 
   useEffect(() => {
     if (screenRef?.current) {
@@ -205,84 +180,36 @@ const GraphScreen = (props) => {
           height: "10%",
         }}
       >
-        <GraphController></GraphController>
+        <ArrayController></ArrayController>
       </div>
       <div
         ref={screenRef}
-        style={{ width: "100%", height: "90%", backgroundColor: "#1E1E1E" }}
+        style={{
+          width: "100%",
+          height: "90%",
+          backgroundColor: "#1E1E1E",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "flex-end",
+          justifyContent: "space-evenly",
+        }}
       >
-        {dimensions ? (
-          <div>
-            {adjList.map((val, index) => {
-              var color = "white";
-              if(graphState&&graphState.vis&&graphState.vis[index]===true){
-                color = "green";
-              }
-              if (graphState?.currentNode === index) {
+        {dimensions
+          ? arrayState?.array?.map((h, index) => {
+              var color = "green";
+              if (arrayState.red.indexOf(index) !== -1) {
+                color = "red";
+              } else if (arrayState.yellow.indexOf(index) !== -1) {
                 color = "yellow";
+              } else if (arrayState.blue.indexOf(index) !== -1) {
+                color = "blue";
               }
-              return (
-                <Node
-                  key={index}
-                  edgeRef={noderef[index]}
-                  container={screenRef}
-                  top={dimensions.top}
-                  left={dimensions.left}
-                  x={dimensions.x}
-                  y={dimensions.y}
-                  bgColor={color}
-                >
-                  <Card
-                    key={`${index}1`}
-                    aria-disabled
-                    ref={noderef[index]}
-                    style={{
-                      margin: "auto",
-                      padding: "auto",
-                      color: "black",
-                      border: "none",
-                      backgroundColor: color,
-                      userSelect: "none",
-                    }}
-                  >
-                    {index}
-                  </Card>
-                </Node>
-              );
-            })}
-            {connectedNodePairs.map(([n1, n2], index) => {
-              // console.log({n1,n2})
-              var color = "white";
-              
-              
-              if (
-                graphState &&
-                graphState.path&&graphState.path.indexOf(n1) != -1
-              ) {
-                if (graphState.path[graphState.path.indexOf(n1) + 1] === n2) {
-                  color = "red";
-                }
-              }
-              return (
-                <Edge
-                  key={`${n2}<-${n1}`}
-                  n1={noderef[n1]}
-                  n2={noderef[n2]}
-                  label={`${n2}<-${n1}`}
-                  container={screenRef}
-                  bgColor={color}
-                  top={dimensions.top}
-                  left={dimensions.left}
-                  x={dimensions.x}
-                  y={dimensions.y}
-                ></Edge>
-              );
-            })}
-          </div>
-        ) : null}
+              return <Bar key={index} height={h} width={4} color={color}></Bar>;
+            })
+          : null}
       </div>
     </div>
   );
 };
 
-export default GraphScreen;
+export default ArrayScreen;

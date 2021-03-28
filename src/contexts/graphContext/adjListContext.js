@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { generateRandomGraph } from "../utils";
+import { generateRandomGraph } from "../../utils";
 
 // type State = {
 //   adjList: number[];

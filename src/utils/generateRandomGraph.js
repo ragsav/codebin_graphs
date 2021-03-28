@@ -1,5 +1,5 @@
 export default function generateRandomGraph(n) {
-  var adjList = [n];
+  var adjList = Array(n);
   var nodes = [];
   var links = [];
   var map = {};
@@ -10,7 +10,11 @@ export default function generateRandomGraph(n) {
     var neighbours = Math.floor((Math.random() * n) / 2);
     var ngh = [];
     for (var m = 0; m < neighbours; m++) {
-      if (shuffled[m] != i && map[i] != shuffled[m] && map[shuffled[m]] != i) {
+      if (
+        shuffled[m] !== i &&
+        map[i] !== shuffled[m] &&
+        map[shuffled[m]] !== i
+      ) {
         ngh.push(shuffled[m]);
         map[i] = shuffled[m];
       }
