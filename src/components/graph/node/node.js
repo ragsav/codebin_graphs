@@ -14,7 +14,7 @@ const Node = (props, ref) => {
   });
 
   useEffect(() => {
-    // console.log(props);
+    
     if (props.edgeRef?.current && nodeRef.current) {
       const edgePosition = {
         x: position.x + size / 2,
@@ -23,7 +23,7 @@ const Node = (props, ref) => {
       const event = new CustomEvent("position", {
         detail: edgePosition,
       });
-      //   console.log("dispatching event");
+      
       props.edgeRef.current.dispatchEvent(event);
     }
   });

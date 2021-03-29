@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
 import GraphScreen from "./components/graph/graphScreen/graphScreen";
@@ -9,7 +9,9 @@ import { useAlgorithmState } from "./contexts";
 import * as algorithms from "./algorithms";
 import ArrayScreen from "./components/array/arrayScreen/arrayScreen";
 import SideBar from "./components/sideBar/sideBar";
+import CodeViewer from "./components/codeViewer/codeViewer";
 function App() {
+  const [isCodeVisible, setIsCodeVisible] = useState(true);
   const { algorithmType } = useAlgorithmState();
   return (
     <div className="App">
@@ -33,7 +35,10 @@ function App() {
             height: "100%",
           }}
         >
-          <SideBar></SideBar>
+          <SideBar
+            isCodeVisible={isCodeVisible}
+            setIsCodeVisible={setIsCodeVisible}
+          ></SideBar>
         </Col>
         {/* <SideBar></SideBar> */}
         <Col
@@ -41,7 +46,7 @@ function App() {
           sm={{ span: 9 }}
           md={{ span: 9 }}
           lg={{ span: 9 }}
-          xl={{ span: 10 }}
+          xl={{ span: isCodeVisible ? 7 : 10 }}
           style={{
             padding: 0,
             margin: 0,
@@ -66,6 +71,19 @@ function App() {
             </providers.ArrayProvider>
           )}
         </Col>
+        {isCodeVisible ? (
+          <Col
+            className="d-none d-xl-block"
+            xl={{ span: 3 }}
+            style={{
+              padding: 0,
+              margin: 0,
+              height: "100%",
+            }}
+          >
+            <CodeViewer></CodeViewer>
+          </Col>
+        ) : null}
       </Row>
     </div>
   );

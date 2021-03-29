@@ -1,4 +1,4 @@
-import { Card } from "react-bootstrap";
+import { Card, Button, ButtonGroup } from "react-bootstrap";
 import * as algorithms from "../../algorithms";
 import { useAlgorithmActions } from "../../contexts";
 import algorithmNameToHeading from "../../utils/algorithmNameToHeading";
@@ -67,6 +67,24 @@ const SideBar = (props) => {
             </div>
           );
         })}
+      </div>
+      <div>
+        <ButtonGroup>
+          <Button
+            variant="light"
+            style={{
+              marginRight: 2,
+              padding: "2px 8px 2px 8px",
+              fontSize: 12,
+              fontWeight: "500",
+            }}
+            onClick={() => {
+              props.setIsCodeVisible(!props.isCodeVisible);
+            }}
+          >
+            {props.isCodeVisible ? "Hide code" : "Show code"}
+          </Button>
+        </ButtonGroup>
       </div>
     </div>
   );

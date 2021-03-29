@@ -13,9 +13,7 @@ import {
   useGraphProcessState,
   useAdjListState,
 } from "../../../contexts";
-
-
-
+import useElementResize from "../../../hooks/useElementResize";
 
 const GraphController = (props) => {
   const { isPlaying } = useGraphStatusState();
@@ -29,38 +27,20 @@ const GraphController = (props) => {
         display: "flex",
         height: "100%",
         width: "100%",
-        backgroundColor: "#444444",
-        flexDirection: "column",
+        padding: "2px 0px 2px 0px",
+        backgroundImage: "linear-gradient(to bottom,#FFFFFF,#FFFFFF)",
       }}
     >
       <div
         style={{
-          height: "50%",
-          width: "100%",
-
-          paddingBottom: 2,
-          backgroundImage: "linear-gradient(to right,#B7FFEC,#D971FF)",
-        }}
-      >
-        <div
-          style={{
-            height: "100%",
-            width: "100%",
-
-            backgroundColor: "#444444",
-          }}
-        ></div>
-      </div>
-      <div
-        style={{
-          height: "50%",
+          height: "100%",
           width: "100%",
           backgroundColor: "#444444",
           display: "flex",
           flexDirection: "row",
           padding: "4px 16px 6px 16px",
           justifyContent: "flex-start",
-          alignItems:  "center",
+          alignItems: "center",
         }}
       >
         <div>
@@ -148,7 +128,7 @@ const GraphController = (props) => {
   );
 };
 const GraphScreen = (props) => {
-  const optionBarHeight = "10%";
+  
   const screenRef = useRef(null);
   const [dimensions, setDimensions] = useState(null);
   const [nodePositions, setNodePositions] = useState(null);
@@ -157,13 +137,31 @@ const GraphScreen = (props) => {
 
   const { adjList } = useAdjListState();
 
-  // sortingAlgorithm(adjList)
+  // const resizeObserver = new ResizeObserver((entries) => {
+  //   // console.log(entries);
+  //   if(dimensions){
+  //     const dim = {
+  //       top: dimensions.top,
+  //       left: dimensions.left,
+  //       x: Math.floor(entries[0].contentRect.width),
+  //       y: Math.floor(entries[0].contentRect.height),
+  //     };
+  //     setDimensions(dim);
+  //   }
+    
+  // });
+
+  // useEffect(()=>{
+  //   console.log(dimensions)
+  // },[dimensions])
+  
   const { graphState } = useGraphProcessState();
-  useEffect(()=>{console.log(graphState)},[graphState])
-  // console.log(adjList)
+  
   const noderef = adjList.map(() => createRef());
   const reducedEdges = new Map();
   const connectedNodePairs = [];
+
+
   adjList.forEach((adjacentNodes, currentNode) => {
     const currentNodeEdges = [];
     adjacentNodes.forEach((adjacentNode) => {
@@ -178,8 +176,12 @@ const GraphScreen = (props) => {
   });
   //   const [screen]
 
+  
+  
   useEffect(() => {
     if (screenRef?.current) {
+      // resizeObserver.observe(screenRef.current);
+      
       const dim = {
         top: Math.floor(screenRef.current.offsetTop),
         left: Math.floor(screenRef.current.offsetLeft),
@@ -188,6 +190,9 @@ const GraphScreen = (props) => {
       };
       setDimensions({ ...dim });
     }
+    return () => {
+      // resizeObserver.unobserve(screenRef.current);
+    };
   }, [screenRef]);
 
   return (
@@ -203,14 +208,16 @@ const GraphScreen = (props) => {
       <div
         style={{
           width: "100%",
-          height: "10%",
+          height: "5%",
         }}
       >
-        <GraphController></GraphController>
+        <GraphController
+          
+        ></GraphController>
       </div>
       <div
         ref={screenRef}
-        style={{ width: "100%", height: "90%", backgroundColor: "#1E1E1E" }}
+        style={{ width: "100%", height: "95%", backgroundColor: "#1E1E1E" }}
       >
         {dimensions ? (
           <div>
@@ -256,49 +263,36 @@ const GraphScreen = (props) => {
               );
             })}
             {connectedNodePairs.map(([n1, n2], index) => {
-                                                           // console.log({n1,n2})
-                                                           var color = "white";
+              // console.log({n1,n2})
+              var color = "white";
 
-                                                           if (
-                                                             graphState &&
-                                                             graphState.path &&
-                                                             graphState.path.indexOf(
-                                                               n1
-                                                             ) != -1
-                                                           ) {
-                                                             if (
-                                                               graphState.path[
-                                                                 graphState.path.indexOf(
-                                                                   n1
-                                                                 ) + 1
-                                                               ] === n2
-                                                             ) {
-                                                               color = "red";
-                                                             }
-                                                           }
-                                                           return (
-                                                             <Edge
-                                                               key={`${n2}<-${n1}`}
-                                                               n1={noderef[n1]}
-                                                               n2={noderef[n2]}
-                                                               label={`${n2}<-${n1}`}
-                                                               container={
-                                                                 screenRef
-                                                               }
-                                                               bgColor={color}
-                                                               top={
-                                                                 dimensions.top
-                                                               }
-                                                               left={
-                                                                 dimensions.left
-                                                               }
-                                                               x={dimensions.x}
-                                                               y={dimensions.y}
-                                                             ></Edge>
-                                                           );
-                                                         })}
+              if (
+                graphState &&
+                graphState.path &&
+                graphState.path.indexOf(n1) != -1
+              ) {
+                if (graphState.path[graphState.path.indexOf(n1) + 1] === n2) {
+                  color = "red";
+                }
+              }
+              return (
+                <Edge
+                  key={`${n2}<-${n1}`}
+                  n1={noderef[n1]}
+                  n2={noderef[n2]}
+                  label={`${n2}<-${n1}`}
+                  container={screenRef}
+                  bgColor={color}
+                  top={dimensions.top}
+                  left={dimensions.left}
+                  x={dimensions.x}
+                  y={dimensions.y}
+                ></Edge>
+              );
+            })}
           </div>
         ) : null}
+        
       </div>
     </div>
   );
