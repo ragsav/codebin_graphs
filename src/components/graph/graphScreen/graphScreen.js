@@ -38,7 +38,7 @@ const GraphController = (props) => {
           height: "50%",
           width: "100%",
 
-          paddingBottom: 3,
+          paddingBottom: 2,
           backgroundImage: "linear-gradient(to right,#B7FFEC,#D971FF)",
         }}
       >
@@ -58,8 +58,9 @@ const GraphController = (props) => {
           backgroundColor: "#444444",
           display: "flex",
           flexDirection: "row",
-          padding: "4px 16px 4px 16px",
+          padding: "4px 16px 6px 16px",
           justifyContent: "flex-start",
+          alignItems:  "center",
         }}
       >
         <div>
@@ -194,7 +195,7 @@ const GraphScreen = (props) => {
       style={{
         height: "100%",
         width: "100%",
-
+        overflow: "hidden",
         display: "flex",
         flexDirection: "column",
       }}
@@ -215,7 +216,11 @@ const GraphScreen = (props) => {
           <div>
             {adjList.map((val, index) => {
               var color = "white";
-              if(graphState&&graphState.vis&&graphState.vis[index]===true){
+              if (
+                graphState &&
+                graphState.vis &&
+                graphState.vis[index] === true
+              ) {
                 color = "green";
               }
               if (graphState?.currentNode === index) {
@@ -251,33 +256,47 @@ const GraphScreen = (props) => {
               );
             })}
             {connectedNodePairs.map(([n1, n2], index) => {
-              // console.log({n1,n2})
-              var color = "white";
-              
-              
-              if (
-                graphState &&
-                graphState.path&&graphState.path.indexOf(n1) != -1
-              ) {
-                if (graphState.path[graphState.path.indexOf(n1) + 1] === n2) {
-                  color = "red";
-                }
-              }
-              return (
-                <Edge
-                  key={`${n2}<-${n1}`}
-                  n1={noderef[n1]}
-                  n2={noderef[n2]}
-                  label={`${n2}<-${n1}`}
-                  container={screenRef}
-                  bgColor={color}
-                  top={dimensions.top}
-                  left={dimensions.left}
-                  x={dimensions.x}
-                  y={dimensions.y}
-                ></Edge>
-              );
-            })}
+                                                           // console.log({n1,n2})
+                                                           var color = "white";
+
+                                                           if (
+                                                             graphState &&
+                                                             graphState.path &&
+                                                             graphState.path.indexOf(
+                                                               n1
+                                                             ) != -1
+                                                           ) {
+                                                             if (
+                                                               graphState.path[
+                                                                 graphState.path.indexOf(
+                                                                   n1
+                                                                 ) + 1
+                                                               ] === n2
+                                                             ) {
+                                                               color = "red";
+                                                             }
+                                                           }
+                                                           return (
+                                                             <Edge
+                                                               key={`${n2}<-${n1}`}
+                                                               n1={noderef[n1]}
+                                                               n2={noderef[n2]}
+                                                               label={`${n2}<-${n1}`}
+                                                               container={
+                                                                 screenRef
+                                                               }
+                                                               bgColor={color}
+                                                               top={
+                                                                 dimensions.top
+                                                               }
+                                                               left={
+                                                                 dimensions.left
+                                                               }
+                                                               x={dimensions.x}
+                                                               y={dimensions.y}
+                                                             ></Edge>
+                                                           );
+                                                         })}
           </div>
         ) : null}
       </div>
