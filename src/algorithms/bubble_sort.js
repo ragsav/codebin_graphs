@@ -1,5 +1,4 @@
 const bubble_sort = `
-
 algorithm =function* (array) {
   console.log(array)
   for(var i=0;i<array.length;i++){

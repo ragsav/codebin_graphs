@@ -1,8 +1,8 @@
 import React from "react";
 import { render } from "react-dom";
 import AceEditor from "react-ace";
-
-import "ace-builds/src-noconflict/mode-java";
+import { Resizable } from "re-resizable";
+import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-monokai";
 
 const CodeViewer = (props) => {
@@ -10,26 +10,28 @@ const CodeViewer = (props) => {
     console.log("change", newValue);
   }
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-
-        padding: "2px 2px 2px 2px",
-        backgroundImage: "linear-gradient(to bottom,#FFFFFF,#B443F1)",
+    <Resizable
+      defaultSize={{
+        width: 400,
+        height: 600,
       }}
+      maxHeight={600}
+      maxWidth = {500}
     >
       <AceEditor
-        mode="java"
+        mode="javascript"
+        
         theme="monokai"
+        showPrintMargin={false}
+
         readOnly
-        onChange={onChange}
+        value={props.code}
         name="UNIQUE_ID_OF_DIV"
-        showGutter={false}
+        showGutter={true}
         style={{ height: "100%", width: "100%" }}
         editorProps={{ $blockScrolling: true }}
       />
-    </div>
+    </Resizable>
   );
 };
 

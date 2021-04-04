@@ -2,19 +2,18 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import { Card } from "react-bootstrap";
 
 const Node = (props, ref) => {
-  const [size, setSize] = useState(40);
+  const [size, setSize] = useState(20);
 
   const containerRef = props.container?.current;
 
   const nodeRef = useRef(null);
 
   const [position, setPosition] = useState({
-    x: Math.floor(props.x / 2 + props.left - size / 2),
-    y: Math.floor(props.y / 2 + props.top - size / 2),
+    x: Math.floor(Math.random() * (props.x - 40) + props.left + 20 - size / 2),
+    y: Math.floor(Math.random() * (props.y - 40) + props.top + 20 - size / 2),
   });
 
   useEffect(() => {
-    
     if (props.edgeRef?.current && nodeRef.current) {
       const edgePosition = {
         x: position.x + size / 2,
@@ -23,10 +22,24 @@ const Node = (props, ref) => {
       const event = new CustomEvent("position", {
         detail: edgePosition,
       });
-      
+
       props.edgeRef.current.dispatchEvent(event);
     }
   });
+
+  useEffect(() => {
+    if (props.edgeRef && props.edgeRef.current) {
+      const edgePosition = {
+        x: position.x + size / 2,
+        y: position.y + size / 2,
+      };
+      const event = new CustomEvent("position", {
+        detail: edgePosition,
+      });
+
+      props.edgeRef.current.dispatchEvent(event);
+    }
+  }, [props]);
 
   function handleMouseMove(e) {
     if (containerRef) {
@@ -45,7 +58,7 @@ const Node = (props, ref) => {
       const containerHeight = containerRef.offsetHeight;
 
       var x_new, y_new;
-      x_new = Math.floor(pointerX - parentParentLeft - size / 2);
+      x_new = Math.floor(pointerX - size / 2);
       y_new = Math.floor(pointerY - parentParentTop - size / 2);
 
       if (x_new < parentLeft) {
@@ -79,7 +92,7 @@ const Node = (props, ref) => {
     <Card
       ref={nodeRef}
       style={{
-        padding: 5,
+        padding: 0,
         margin: 0,
         backgroundColor: props.bgColor,
         position: "absolute",

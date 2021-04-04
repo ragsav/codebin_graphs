@@ -2,91 +2,86 @@ import './App.css';
 import React, { useEffect, useRef, useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-bootstrap-range-slider/dist/react-bootstrap-range-slider.css";
-import GraphScreen from "./components/graph/graphScreen/graphScreen";
+
 import { Col, Row ,Card} from 'react-bootstrap';
 import * as providers from "./contexts";
 import { useAlgorithmState } from "./contexts";
 import * as algorithms from "./algorithms";
-import ArrayScreen from "./components/array/arrayScreen/arrayScreen";
-import SideBar from "./components/sideBar/sideBar";
-import CodeViewer from "./components/codeViewer/codeViewer";
-function App() {
-  const [isCodeVisible, setIsCodeVisible] = useState(true);
-  const { algorithmType } = useAlgorithmState();
+
+
+import { makeStyles } from "@material-ui/core/styles";
+import Drawer from "@material-ui/core/Drawer";
+import CssBaseline from "@material-ui/core/CssBaseline";
+
+import ArrayDisplay from "./components/array/array";
+import BarArrayDisplay from "./components/array/barArray";
+import StackQueueDisplay from "./components/stackQueue/stackQueue";
+import GraphScreen from "./components/graph/graph";
+
+const drawerWidth = 240;
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: "flex",
+  },
+  appBar: {
+    width: `calc(100% - ${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  // necessary for content to be below app bar
+  toolbar: theme.mixins.toolbar,
+  content: {
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.default,
+    padding: theme.spacing(3),
+  },
+}));
+
+export default function PermanentDrawerLeft() {
+  const classes = useStyles();
+
   return (
-    <div className="App">
-      <Row
-        style={{
-          padding: 0,
-          margin: 0,
-          width: "100%",
-          height: "100%",
+    <div className={classes.root}>
+      <CssBaseline />
+
+      <Drawer
+        className={classes.drawer}
+        variant="permanent"
+        classes={{
+          paper: classes.drawerPaper,
         }}
-      >
-        <Col
-          className="d-none d-sm-block"
-          sm={{ span: 3 }}
-          md={{ span: 3 }}
-          lg={{ span: 3 }}
-          xl={{ span: 2 }}
-          style={{
-            padding: 0,
-            margin: 0,
-            height: "100%",
-          }}
-        >
-          <SideBar
-            isCodeVisible={isCodeVisible}
-            setIsCodeVisible={setIsCodeVisible}
-          ></SideBar>
-        </Col>
-        {/* <SideBar></SideBar> */}
-        <Col
-          zs={{ span: 12 }}
-          sm={{ span: 9 }}
-          md={{ span: 9 }}
-          lg={{ span: 9 }}
-          xl={{ span: isCodeVisible ? 7 : 10 }}
-          style={{
-            padding: 0,
-            margin: 0,
-            height: "100%",
-          }}
-        >
-          {algorithmType === "graph" ? (
-            <providers.AdjListProvider>
-              <providers.GraphStatusProvider>
-                <providers.GraphProcessProvider>
-                  <GraphScreen></GraphScreen>
-                </providers.GraphProcessProvider>
-              </providers.GraphStatusProvider>
-            </providers.AdjListProvider>
-          ) : (
-            <providers.ArrayProvider>
-              <providers.ArrayStatusProvider>
-                <providers.ArrayProcessProvider>
-                  <ArrayScreen></ArrayScreen>
-                </providers.ArrayProcessProvider>
-              </providers.ArrayStatusProvider>
-            </providers.ArrayProvider>
-          )}
-        </Col>
-        {isCodeVisible ? (
-          <Col
-            className="d-none d-xl-block"
-            xl={{ span: 3 }}
-            style={{
-              padding: 0,
-              margin: 0,
-              height: "100%",
-            }}
-          >
-            <CodeViewer></CodeViewer>
-          </Col>
-        ) : null}
-      </Row>
+        anchor="left"
+      ></Drawer>
+      <main className={classes.content}>
+        {/* <ArrayDisplay
+          title={"Visited array"}
+          titleVisible={false}
+        ></ArrayDisplay>
+        <BarArrayDisplay
+          title={"Visited array"}
+          height="200"
+          titleVisible={true}
+        ></BarArrayDisplay>
+        <StackQueueDisplay
+          title={"Visited array"}
+          height="200"
+          titleVisible={true}
+        ></StackQueueDisplay> */}
+        <providers.AdjListProvider>
+          <providers.GraphStatusProvider>
+            <providers.GraphProcessProvider>
+              <GraphScreen></GraphScreen>
+            </providers.GraphProcessProvider>
+          </providers.GraphStatusProvider>
+        </providers.AdjListProvider>
+      </main>
     </div>
   );
 }
-
-export default App;

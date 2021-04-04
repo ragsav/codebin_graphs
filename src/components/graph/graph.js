@@ -1,7 +1,7 @@
 import { createRef, useEffect, useRef, useState } from "react";
-import { Card, Button, ButtonGroup } from "react-bootstrap";
-import Edge from "../edge/edge";
-import Node from "../node/node";
+import { Card, Button, ButtonGroup, Row, Col } from "react-bootstrap";
+import Edge from "./edge";
+import Node from "./node";
 
 import RangeSlider from "react-bootstrap-range-slider";
 
@@ -12,8 +12,8 @@ import {
   useGraphProcessActions,
   useGraphProcessState,
   useAdjListState,
-} from "../../../contexts";
-import useElementResize from "../../../hooks/useElementResize";
+  useAlgorithmState,
+} from "../../contexts";
 
 const GraphController = (props) => {
   const { isPlaying } = useGraphStatusState();
@@ -21,92 +21,63 @@ const GraphController = (props) => {
   const { refreshAdjList } = useAdjListActions();
   const { frequency } = useGraphProcessState();
   const { changeFrequency } = useGraphProcessActions();
-  return (
-    <div
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%",
-        padding: "2px 0px 2px 0px",
-        backgroundImage: "linear-gradient(to bottom,#FFFFFF,#FFFFFF)",
-      }}
-    >
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          backgroundColor: "#444444",
-          display: "flex",
-          flexDirection: "row",
-          padding: "4px 16px 6px 16px",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      >
-        <div>
-          <ButtonGroup>
-            <Button
-              variant="light"
-              style={{
-                marginRight: 2,
-                padding: "2px 8px 2px 8px",
-                fontSize: 12,
-                fontWeight: "500",
-              }}
-              onClick={refreshAdjList}
-            >
-              Generate random graph
-            </Button>
-            <Button
-              variant="light"
-              style={{
-                marginRight: 2,
-                padding: "2px 8px 2px 8px",
-                fontSize: 12,
-                fontWeight: "500",
-              }}
-            >
-              Manual input
-            </Button>
-          </ButtonGroup>
-        </div>
 
-        <div
-          style={{
-            marginLeft: 20,
-            marginRight: 20,
-            display: "flex",
-            flexDirection: "row",
-            padding: 0,
-            justifyContent: "center",
-          }}
-        >
-          <span
+  return (
+    <Row style={{ margin: 0, padding: 4, backgroundColor: "#393939" }}>
+      <Col style={{ margin: 0, padding: 0 }}>
+        <ButtonGroup>
+          <Button
+            variant="light"
             style={{
-              marginRight: 8,
-              color: "white",
-              padding: "auto",
+              marginRight: 2,
+              padding: "2px 8px 2px 8px",
               fontSize: 12,
               fontWeight: "500",
-              display: "flex",
-              alignItems: "center",
+            }}
+            onClick={refreshAdjList}
+          >
+            Generate random graph
+          </Button>
+          <Button
+            variant="light"
+            style={{
+              marginRight: 2,
+              padding: "2px 8px 2px 8px",
+              fontSize: 12,
+              fontWeight: "500",
             }}
           >
-            Speed
-          </span>
-          <RangeSlider
-            tooltip={false}
-            variant="light"
-            size="sm"
-            min={1}
-            value={frequency}
-            onChange={(changeEvent) =>
-              changeFrequency(changeEvent.target.value)
-            }
-          />
-        </div>
-        <div>
-          <ButtonGroup>
+            Manual input
+          </Button>
+        </ButtonGroup>
+      </Col>
+      <Col style={{ margin: 0, padding: 0 }}>
+        <Row style={{ margin: 0, padding: 0 }}>
+          <Col style={{ margin: 0, padding: 0 }}>
+            <span
+              style={{
+                color: "white",
+
+                fontSize: 12,
+                fontWeight: "500",
+              }}
+            >
+              Speed
+            </span>
+          </Col>
+          <Col style={{ margin: 0, padding: 0 }}>
+            <RangeSlider
+              tooltip={false}
+              variant="light"
+              size="sm"
+              min={1}
+              value={frequency}
+              onChange={(changeEvent) =>
+                changeFrequency(changeEvent.target.value)
+              }
+            />
+          </Col>
+          <Col style={{ margin: 0, padding: 0 }}>
             <Button
               variant="light"
               style={{
@@ -121,46 +92,26 @@ const GraphController = (props) => {
             >
               {isPlaying ? "Pause" : "Play"}
             </Button>
-          </ButtonGroup>
-        </div>
-      </div>
-    </div>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 const GraphScreen = (props) => {
-  
   const screenRef = useRef(null);
   const [dimensions, setDimensions] = useState(null);
   const [nodePositions, setNodePositions] = useState(null);
   const nodeRef1 = useRef(null);
   const nodeRef2 = useRef(null);
-
+  const { algorithmString } = useAlgorithmState();
   const { adjList } = useAdjListState();
 
-  // const resizeObserver = new ResizeObserver((entries) => {
-  //   // console.log(entries);
-  //   if(dimensions){
-  //     const dim = {
-  //       top: dimensions.top,
-  //       left: dimensions.left,
-  //       x: Math.floor(entries[0].contentRect.width),
-  //       y: Math.floor(entries[0].contentRect.height),
-  //     };
-  //     setDimensions(dim);
-  //   }
-    
-  // });
-
-  // useEffect(()=>{
-  //   console.log(dimensions)
-  // },[dimensions])
-  
   const { graphState } = useGraphProcessState();
-  
+
   const noderef = adjList.map(() => createRef());
   const reducedEdges = new Map();
   const connectedNodePairs = [];
-
 
   adjList.forEach((adjacentNodes, currentNode) => {
     const currentNodeEdges = [];
@@ -176,12 +127,10 @@ const GraphScreen = (props) => {
   });
   //   const [screen]
 
-  
-  
   useEffect(() => {
     if (screenRef?.current) {
       // resizeObserver.observe(screenRef.current);
-      
+
       const dim = {
         top: Math.floor(screenRef.current.offsetTop),
         left: Math.floor(screenRef.current.offsetLeft),
@@ -211,57 +160,15 @@ const GraphScreen = (props) => {
           height: "5%",
         }}
       >
-        <GraphController
-          
-        ></GraphController>
+        <GraphController />
       </div>
+
       <div
         ref={screenRef}
-        style={{ width: "100%", height: "95%", backgroundColor: "#1E1E1E" }}
+        style={{ width: "100%", height: 600, backgroundColor: "#404040" }}
       >
         {dimensions ? (
           <div>
-            {adjList.map((val, index) => {
-              var color = "white";
-              if (
-                graphState &&
-                graphState.vis &&
-                graphState.vis[index] === true
-              ) {
-                color = "green";
-              }
-              if (graphState?.currentNode === index) {
-                color = "yellow";
-              }
-              return (
-                <Node
-                  key={index}
-                  edgeRef={noderef[index]}
-                  container={screenRef}
-                  top={dimensions.top}
-                  left={dimensions.left}
-                  x={dimensions.x}
-                  y={dimensions.y}
-                  bgColor={color}
-                >
-                  <Card
-                    key={`${index}1`}
-                    aria-disabled
-                    ref={noderef[index]}
-                    style={{
-                      margin: "auto",
-                      padding: "auto",
-                      color: "black",
-                      border: "none",
-                      backgroundColor: color,
-                      userSelect: "none",
-                    }}
-                  >
-                    {index}
-                  </Card>
-                </Node>
-              );
-            })}
             {connectedNodePairs.map(([n1, n2], index) => {
               // console.log({n1,n2})
               var color = "white";
@@ -290,9 +197,50 @@ const GraphScreen = (props) => {
                 ></Edge>
               );
             })}
+            {adjList.map((val, index) => {
+              var color = "white";
+              if (
+                graphState &&
+                graphState.vis &&
+                graphState.vis[index] === true
+              ) {
+                color = "green";
+              }
+              if (graphState?.currentNode === index) {
+                color = "yellow";
+              }
+              return (
+                <Node
+                  key={index}
+                  edgeRef={noderef[index]}
+                  container={screenRef}
+                  top={dimensions.top}
+                  left={dimensions.left}
+                  x={dimensions.x}
+                  y={dimensions.y}
+                  bgColor={color}
+                >
+                  <Card
+                    key={`${index}1`}
+                    aria-disabled
+                    ref={noderef[index]}
+                    style={{
+                      fontSize: 10,
+                      margin: "auto",
+                      padding: 0,
+                      color: "black",
+                      border: "none",
+                      backgroundColor: color,
+                      userSelect: "none",
+                    }}
+                  >
+                    {index}
+                  </Card>
+                </Node>
+              );
+            })}
           </div>
         ) : null}
-        
       </div>
     </div>
   );
