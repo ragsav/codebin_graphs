@@ -1,4 +1,4 @@
 # Hosted on github pages
-https://ragsav.github.io/codebin_graphs/
+https://ragsav.github.io/codebin/
 
 

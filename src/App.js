@@ -60,7 +60,7 @@ export default function PermanentDrawerLeft() {
         anchor="left"
       ></Drawer>
       <main className={classes.content}>
-        {/* <ArrayDisplay
+        <ArrayDisplay
           title={"Visited array"}
           titleVisible={false}
         ></ArrayDisplay>
@@ -73,7 +73,7 @@ export default function PermanentDrawerLeft() {
           title={"Visited array"}
           height="200"
           titleVisible={true}
-        ></StackQueueDisplay> */}
+        ></StackQueueDisplay>
         <providers.AdjListProvider>
           <providers.GraphStatusProvider>
             <providers.GraphProcessProvider>
