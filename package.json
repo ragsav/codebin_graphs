@@ -2,7 +2,7 @@
   "name": "memo",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://ragsav.github.io/codebin_graphs",
+  "homepage": "http://ragsav.github.io/codebin",
   "dependencies": {
     "@emotion/react": "^11.1.5",
     "@emotion/styled": "^11.1.5",
